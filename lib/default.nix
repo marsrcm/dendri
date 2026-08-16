@@ -12,4 +12,6 @@ in
     inherit lib;
     inherit (internal) resolveAspects;
   };
+
+  dotfiles = import ./dotfiles.nix;
 }
