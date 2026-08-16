@@ -16,4 +16,6 @@ in
   dotfiles = import ./dotfiles.nix;
 
   env = import ./env.nix lib;
+
+  tree = import ./tree.nix;
 }
