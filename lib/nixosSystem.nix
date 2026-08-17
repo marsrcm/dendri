@@ -7,6 +7,7 @@ let
     {
       nixosSystem,
       homeManagerModule,
+      sharedSpecialArgs ? { },
     }:
     host:
     let
@@ -22,6 +23,7 @@ let
     in
     nixosSystem {
       system = host.system;
+      specialArgs = sharedSpecialArgs // (host.specialArgs or { });
       modules = [
 
         hostModules.nixos
