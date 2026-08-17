@@ -15,6 +15,7 @@ let
       ''
     else
       {
+        key = "dendri-aspect:${aspectClass}:${name}";
         imports = map (resolveAspect' aspectClass (aspectPath ++ [ name ])) aspect.includes ++ [
           aspect.${aspectClass}
         ];
