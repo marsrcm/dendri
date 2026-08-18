@@ -6,8 +6,16 @@ let
   mkDendriHost =
     {
       nixosSystem,
-      homeManagerModule,
+      inputs,
       sharedSpecialArgs ? { },
+      homeManagerModule ? { inputs, ... }: {
+        imports = [ inputs.home-manager.nixosModules.home-manager ];
+        home-manager = {
+          useGlobalPkgs = lib.mkDefault true;
+          useUserPackages = lib.mkDefault true;
+          extraSpecialArgs = { inherit inputs; };
+        };
+      },
     }:
     host:
     let
@@ -23,7 +31,7 @@ let
     in
     nixosSystem {
       system = host.system;
-      specialArgs = sharedSpecialArgs // (host.specialArgs or { });
+      specialArgs = { inherit inputs; } // sharedSpecialArgs // (host.specialArgs or { });
       modules = [
 
         hostModules.nixos
