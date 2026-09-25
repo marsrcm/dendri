@@ -14,8 +14,11 @@ let
         ${lib.concatStringsSep " -> " (aspectPath ++ [ name ])}
       ''
     else
-      {
+      # Let evalModules assign a distinct key to each function application.
+      lib.optionalAttrs (!(aspect.__dendriApplied or false)) {
         key = "dendri-aspect:${aspectClass}:${name}";
+      }
+      // {
         imports = map (resolveAspect' aspectClass (aspectPath ++ [ name ])) aspect.includes ++ [
           aspect.${aspectClass}
         ];
