@@ -9,7 +9,7 @@ A small custom implementation of a dendritic module system and misc Nix utilitie
   - `system` — `mkNixosConfigurations`, evaluates its `aspects` module list and builds NixOS systems from `aspects.hosts.<name>` with home-manager wired in.
   - `dotfiles` — `mkDotfiles`, produces `{ root, path }` for referencing dotfiles.
   - `env` — `requireEnv`, throws unless an env var is set (evaluation must be `--impure`).
-  - `tree` — `importTree` / `importTreeScoped`, recursive `imports` of all `.nix` files under a directory.
+  - `tree` — `importTree` / `importTreeScoped`, recursive `imports` of `.nix` files under a directory, skipping files and directories whose names start with `_`.
 - `lib/internal.nix` — private aspect types and `evalAspects`, plus `resolveAspect` / `resolveAspects` for recursive includes and cycle detection.
 - `lib/nixosSystem.nix` — `mkNixosConfigurations` implementation.
 - `lib/env.nix`, `lib/dotfiles.nix`, `lib/tree.nix` — helpers used above.

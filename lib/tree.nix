@@ -11,7 +11,10 @@ let
           type = entries.${name};
           path = dir + "/${name}";
         in
-        if type == "directory" then
+        # Reserve underscore-prefixed files and directories for explicit imports.
+        if builtins.substring 0 1 name == "_" then
+          [ ]
+        else if type == "directory" then
           nixFiles path
         else if type == "regular" && builtins.match ".*\\.nix" name != null then
           [ path ]
