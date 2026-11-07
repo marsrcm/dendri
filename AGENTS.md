@@ -17,6 +17,7 @@ A small custom implementation of a dendritic module system and misc Nix utilitie
 `mkNixosConfigurations.aspects` takes an unevaluated list of modules (paths,
 attribute sets, functions, or `tree.importTree` results). Base and specific aspect
 modules are composed in that list and evaluated together internally.
+System construction uses `inputs.nixpkgs.lib.nixosSystem`, which must exist.
 
 ## Conventions
 
