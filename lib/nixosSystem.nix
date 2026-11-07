@@ -1,5 +1,6 @@
 {
   lib,
+  evalAspects,
   resolveAspect,
 }:
 let
@@ -18,10 +19,13 @@ let
         };
       },
     }:
+    let
+      evaluatedAspects = evalAspects aspects;
+    in
     lib.mapAttrs (
       name: aspect:
       if !lib.isAttrs aspect || !(aspect ? _name) then
-        throw "dendri: aspects.hosts.${name} must be a concrete, evaluated aspect; host functions and nested host namespaces are not supported"
+        throw "dendri: aspects.hosts.${name} must be a concrete aspect; host functions and nested host namespaces are not supported"
       else
         nixosSystem {
           system = null;
@@ -37,7 +41,7 @@ let
             }
           ];
         }
-    ) (aspects.hosts or { });
+    ) (evaluatedAspects.hosts or { });
 in
 {
   inherit mkNixosConfigurations;
