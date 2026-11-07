@@ -10,7 +10,7 @@ in
 
   system = import ./nixosSystem.nix {
     inherit lib;
-    inherit (internal) resolveAspects;
+    inherit (internal) resolveAspect;
   };
 
   dotfiles = import ./dotfiles.nix;

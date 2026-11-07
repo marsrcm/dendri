@@ -1,10 +1,11 @@
 {
   lib,
-  resolveAspects,
+  resolveAspect,
 }:
 let
-  mkDendriHost =
+  mkNixosConfigurations =
     {
+      aspects,
       nixosSystem,
       inputs,
       sharedSpecialArgs ? { },
@@ -17,39 +18,27 @@ let
         };
       },
     }:
-    host:
-    let
-      hostModules = {
-        nixos = {
-          imports = resolveAspects "nixos" (host.aspects or [ ]);
-        };
-
-        homeManager = {
-          imports = resolveAspects "homeManager" (host.aspects or [ ]);
-        };
-      };
-    in
-    nixosSystem {
-      system = host.system;
-      specialArgs = { inherit inputs; } // sharedSpecialArgs // (host.specialArgs or { });
-      modules = [
-
-        hostModules.nixos
-        (host.nixos or { })
-
-        homeManagerModule
-
-        {
-          home-manager.users = lib.mapAttrs (_: user: {
-            imports = [
-              hostModules.homeManager
-              (user.homeManager or { })
-            ];
-          }) (host.users or { });
+    lib.mapAttrs (
+      name: aspect:
+      if !lib.isAttrs aspect || !(aspect ? _name) then
+        throw "dendri: aspects.hosts.${name} must be a concrete, evaluated aspect; host functions and nested host namespaces are not supported"
+      else
+        nixosSystem {
+          system = null;
+          specialArgs = {
+            inherit inputs;
+          }
+          // sharedSpecialArgs;
+          modules = [
+            (resolveAspect "nixos" aspect)
+            homeManagerModule
+            {
+              home-manager.sharedModules = [ (resolveAspect "homeManager" aspect) ];
+            }
+          ];
         }
-      ];
-    };
+    ) (aspects.hosts or { });
 in
 {
-  inherit mkDendriHost;
+  inherit mkNixosConfigurations;
 }
