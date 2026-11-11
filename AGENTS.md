@@ -6,7 +6,7 @@ A small custom implementation of a dendritic module system and misc Nix utilitie
 
 - `flake.nix` — exposes `mkLib`, which calls `import ./lib`.
 - `lib/default.nix` — entry point; takes `lib` and returns the public API:
-  - `system` — `mkNixosConfigurations`, evaluates its `aspects` module list and builds NixOS systems from `aspects.hosts.<name>` with home-manager wired in.
+  - `system` — `mkNixosConfigurations`, evaluates its `aspects` module list and builds NixOS systems from `aspects.hosts.<name>` with optional home-manager aspect wiring.
   - `dotfiles` — `mkDotfiles`, produces `{ root, path }` for referencing dotfiles.
   - `env` — `requireEnv`, throws unless an env var is set (evaluation must be `--impure`).
   - `tree` — `importTree` / `importTreeScoped`, recursive `imports` of `.nix` files under a directory, skipping files and directories whose names start with `_`.
@@ -17,7 +17,11 @@ A small custom implementation of a dendritic module system and misc Nix utilitie
 `mkNixosConfigurations.aspects` takes an unevaluated list of modules (paths,
 attribute sets, functions, or `tree.importTree` results). Base and specific aspect
 modules are composed in that list and evaluated together internally.
-System construction uses `inputs.nixpkgs.lib.nixosSystem`, which must exist.
+System construction uses the required `nixosSystem` function argument and forwards
+`specialArgs` (default `{ }`) unchanged. Aspects' `nixos` modules own home-manager
+imports, package settings, and `extraSpecialArgs`. When the
+`home-manager.sharedModules` option is declared, the host's resolved `homeManager`
+aspect is added to it; otherwise, home-manager aspect content is left unevaluated.
 
 ## Conventions
 
